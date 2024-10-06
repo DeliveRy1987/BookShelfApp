@@ -16,9 +16,21 @@
                   font-weight: bold; /* カーソルを合わせると文字が太くなる */
                 }
               </style>
+            <a class="navbar-brand icon" href="#">My shelf</a>
+            
             <a class="nav-link mx-3 highlight-text" href="{% url 'index' %}">HOME</a>
             <a class="nav-link mx-3 highlight-text" href="{% url 'list-book' %}">書籍一覧</a>
             <a class="nav-link mx-3 highlight-text" href="{% url 'create-book' %}">書籍登録</a>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Others
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#"></a>My Page</li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><a class="dropdown-item" href="#">お問い合わせ</a></li>
+                </ul>
+            </div>
         </div>
         <div class="navbar-nav d-flex flex-row">
             {% if request.user.is_authenticated %}

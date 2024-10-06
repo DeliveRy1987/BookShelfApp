@@ -12,7 +12,16 @@ from .consts import ITEMS_PER_PAGE
 class ListBookView(LoginRequiredMixin, ListView):                   #database使う時はListViewを使う
     template_name = 'book/book_list.html'
     model = Book                                #model = Book でBookモデルを使うことを指定している
-    paginate_by = ITEMS_PER_PAGE
+    # paginate_by = ITEMS_PER_PAGE
+    
+    def get_queryset(self, **kwargs):                    #ここから下は検索機能
+        queryset = super().get_queryset(**kwargs)
+        query = self.request.GET
+
+        if q := query.get('q'): #python3.8以降
+            queryset = queryset.filter(title__icontains=q)
+
+        return queryset.order_by('-id')
     
     
 class DetailBookView(LoginRequiredMixin, DetailView):             #database使う時はDetailViewを使うがどのデータを使うか指定しないといけない     
