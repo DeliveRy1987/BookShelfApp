@@ -11,11 +11,6 @@
 <body>
     <nav class = "navbar navbar-dark sticky-top bg-primary" >
         <div class="navbar-nav d-flex flex-row">
-            <style>
-                .highlight-text:hover {
-                  font-weight: bold; /* カーソルを合わせると文字が太くなる */
-                }
-              </style>
             <a class="navbar-brand icon" href="#">My shelf</a>
             
             <a class="nav-link mx-3 highlight-text" href="{% url 'index' %}">HOME</a>
@@ -26,9 +21,9 @@
                   Others
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#"></a>My Page</li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">お問い合わせ</a></li>
+                  <li><a class="dropdown-item" href="{% url 'index' %}"></a>My Page</li>
+                  <li><a class="dropdown-item" href="{% url 'list-book' %}">Another action</a></li>
+                  <li><a class="dropdown-item" href="{% url 'question'%}">お問い合わせ</a></li>
                 </ul>
             </div>
         </div>

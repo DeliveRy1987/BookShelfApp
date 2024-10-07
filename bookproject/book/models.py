@@ -28,3 +28,13 @@ class Review(models.Model):
     
     def __str__(self):
         return self.title
+    
+
+class Question(models.Model):
+    title = models.CharField(max_length=100)
+    text = models.TextField(max_length=700)
+    email = models.EmailField(default='example@example.com')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.title

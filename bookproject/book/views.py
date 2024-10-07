@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from .models import Book, Review
+from .models import Book, Review, Question
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg
@@ -103,3 +103,17 @@ class CreateReviewView(LoginRequiredMixin, CreateView):           #CreateViewは
     
     def get_success_url(self):
         return reverse('detail-book', kwargs={'pk': self.object.book.id})  #成功したらどこに行くか指定する
+    
+    
+class CreateQuestionView(LoginRequiredMixin, CreateView):                   #database使う時はListViewを使う
+    template_name = 'book/question_form.html'
+    model = Question
+    fields = ['title', 'text', 'user',]
+    
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)     
+    
+    def get_success_url(self):
+        return reverse('index')  #成功したらどこに行くか指定する
