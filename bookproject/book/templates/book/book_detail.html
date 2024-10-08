@@ -21,13 +21,16 @@
         </div>
         {% endfor %}
       </div>
+        
       
       <a href="{% url 'review' object.pk%}" class="btn btn-primary">レビューする</a>
+      <a href="{% url 'add-to-favorites' book.pk %}" class="btn btn-primary">マイページに追加</a>
       <a href="{% url 'list-book' %}" class="btn btn-primary">一覧へ</a>
       <a href="{% url 'update-book' object.pk %}" class="btn btn-primary">編集する</a>
       <a href="{% url 'delete-book' object.pk %}" class="btn btn-primary">削除する</a>
       <h6 class="card-subtitle mb-2 text-body-secondary">{{ object.category }}</h6>
-      
-  </div>
 
+  </div>
+      
+  
 {% endblock content %}

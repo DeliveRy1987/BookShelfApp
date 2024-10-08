@@ -38,3 +38,16 @@ class Question(models.Model):
     
     def __str__(self):
         return self.title
+    
+
+#お気に入り機能
+class FavoriteBook(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'book']  # 1つの投稿に対して1ユーザー1お気に入り制約
+
+    def __str__(self):
+        return f"{self.user} - {self.book.title}"
