@@ -131,24 +131,18 @@ class CreateQuestionView(LoginRequiredMixin, CreateView):
 
 def add_to_favorites(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
-    favorite, created = FavoriteBook.objects.get_or_create(user=request.user, book=book)
+    created = FavoriteBook.objects.get_or_create(user=request.user, book=book)
 
     if created:
         # お気に入りに追加された場合
         return redirect('mypage')  # 成功時にマイページにリダイレクト
     else:
         # すでにお気に入りに存在する場合
-        return redirect('index')  # すでに追加されていた場合は元のページに戻る
-    
+        return redirect('index')  # すでに追加されていた場合はindexに戻る
+
 
 
 def mypage(request):
     # ユーザーのお気に入り投稿を取得
     favorite_books = FavoriteBook.objects.filter(user=request.user).select_related('book')
-
-    
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)     
-    
-    return render(request, 'mypage.html', {'favorite_books': favorite_books})
+    return render(request, 'book/mypage.html', {'favorite_books': favorite_books})
