@@ -5,14 +5,13 @@
 {% block content %}
 <h2>{{ user }}さんのマイページ</h2>
 
-{% if favorite_posts %}
+{% if favorite_books %}
  
     {% for favorite in favorite_books %}
     <ul>
       <li>
-        {{ favorite.book.title }}
-        {{ favorite.book }}
-        <a href="{% url 'book-detail' favorite.book.pk %}">{{ favorite.book.title }}</a>
+       
+        <a href="{% url 'detail-book' favorite.book.pk %}">{{ favorite.book.title }}</a>
       </li>
     </ul>
     {% endfor %}

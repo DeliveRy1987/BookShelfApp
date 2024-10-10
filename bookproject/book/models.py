@@ -6,13 +6,18 @@ RATE_CHOICES = [(x, str(x)) for x in range(0, MAX_RATE + 1)]   #レビューの�
 #     title = models.CharField(max_length=100)
 #     number = models.IntegerField()
 
-CATEGORY = (('business', 'ビジネス'),('life','生活'),('other','その他'))
+CATEGORY = (
+    ('business', 'ビジネス'),('life','生活'),('Python','Python'),('Django','Django'),('Ruby','Ruby'),('Rails','Rails'),('Java','Java'),('Spring','Spring'),('HTML/CSS','HTML/CSS'),('JavaScript','JavaScript'),('Vue.js','Vue.js'),('React','React'),('Angular','Angular'),('PHP','PHP'),('Laravel','Laravel'),('C++','C++'),('C#','C#'),('Unity','Unity'),('Swift','Swift'),('Kotlin','Kotlin'),('Go','Go'),('Rust','Rust'),('SQL','SQL'),('NoSQL','NoSQL'),
+    ('other','その他')
+    )
 class Book(models.Model):
     title = models.CharField(max_length=100)
     text = models.TextField()
     thumbnail = models.ImageField(null=True, blank=True)
     category = models.CharField(max_length=100, choices=CATEGORY)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    price = models.IntegerField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
     
     def __str__(self):
         return self.title                                             #self.xxxを返すと、そのxxxがデータのタイトルとして表示される

@@ -39,7 +39,7 @@ class DetailBookView(LoginRequiredMixin, DetailView):             #database使�
 class CreateBookView(LoginRequiredMixin, CreateView):           #CreateViewはブラウザからデータベース使う時
     template_name = 'book/book_create.html'
     model = Book
-    fields = ['title', 'text', 'category', 'thumbnail']  #fieldsはcreateで使うデータの種類を指定しないといけない
+    fields = ['title', 'text', 'category', 'thumbnail','price','url']  #fieldsはcreateで使うデータの種類を指定しないといけない
     success_url = reverse_lazy('list-book')  #reverse_lazyは成功したらどこに行くか指定する
     
     def form_valid(self, form):

@@ -5,8 +5,6 @@ from django.views.generic import CreateView
 
 from .forms import SignUpForm
 
-from django.core.mail import send_mail
-from django.conf import settings
 
 
 class SignUpView(CreateView):

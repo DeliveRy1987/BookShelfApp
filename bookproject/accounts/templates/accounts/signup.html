@@ -5,7 +5,7 @@
 {% block h1 %}アカウント作成{% endblock %}
 
 {% block content %}
-    <form method="post" class="p-4 m-4 bg-light border border-success rounded form-group" >
+    <form method="post" class="p-4 m-4 bg-light border border-primary rounded form-group" >
         {% csrf_token %}
         <input type="text" name="username" class="form-control my-4" placeholder="ユーザーID ">
         <input type="email" name="email" class="form-control my-4" placeholder="メール">
