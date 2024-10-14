@@ -20,7 +20,22 @@ class Book(models.Model):
     url = models.URLField(null=True, blank=True)
     
     def __str__(self):
-        return self.title                                             #self.xxxを返すと、そのxxxがデータのタイトルとして表示される
+        return self.title                        #self.xxxを返すと、そのxxxがデータのタイトルとして表示される
+    
+    def total_likes(self):
+        return self.likes.count()
+    
+
+class Like(models.Model):
+    review = models.ForeignKey('Review', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE) 
+    
+    class Meta:
+        unique_together = ['review', 'user']
+        
+    def __str__(self):
+        return f"{self.user} - {self.review.title}"
+
     
     
     

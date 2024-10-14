@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from .models import Book, Review, Question, FavoriteBook
+from .models import Book, Review, Question, FavoriteBook, Like
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404
 
 from django.core.paginator import Paginator
@@ -15,21 +15,49 @@ class ListBookView(LoginRequiredMixin, ListView):                   #database使
     model = Book                                #model = Book でBookモデルを使うことを指定している
     # paginate_by = ITEMS_PER_PAGE
     
-    def get_queryset(self, **kwargs):                    #ここから下は検索機能
+    
+    
+    
+    def get_queryset(self, **kwargs):                    #検索機能（カテゴリもOK+split）
         queryset = super().get_queryset(**kwargs)
         query = self.request.GET
 
-        if q := query.get('q'): #python3.8以降
-            queryset = queryset.filter(title__icontains=q)
+        if q := query.get('q'):
+            keywords = q.split()  # スペースでキーワードを分割
+            query_filter = Q()
+
+            for keyword in keywords:
+                # タイトルまたはカテゴリ（文字列）にキーワードが含まれる場合
+                query_filter |= Q(title__icontains=keyword) | Q(category__icontains=keyword)
+
+            queryset = queryset.filter(query_filter)
 
         return queryset.order_by('-id')
+    
+    
+    
+    # def get_queryset(self, **kwargs):                    #ここから下は検索機能（タイトルのみ）
+    #     queryset = super().get_queryset(**kwargs)
+    #     query = self.request.GET
+
+    #     if q := query.get('q'): #python3.8以降
+    #         queryset = queryset.filter(title__icontains=q)
+
+    #     return queryset.order_by('-id')
     
     
 class DetailBookView(LoginRequiredMixin, DetailView):             #database使う時はDetailViewを使うがどのデータを使うか指定しないといけない     
     template_name = 'book/book_detail.html'
     model = Book
+    model = Like
     
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        like = self.get_object()
+        user = self.request.user
+        context['is_liked'] = like.filter(user=user).exists() if user.is_authenticated else False
+        return context
     
     
     
@@ -146,3 +174,13 @@ def mypage(request):
     # ユーザーのお気に入り投稿を取得
     favorite_books = FavoriteBook.objects.filter(user=request.user).select_related('book')
     return render(request, 'book/mypage.html', {'favorite_books': favorite_books})
+
+
+def like_review(request, review_id, self):
+    review = get_object_or_404(Review, pk=review_id)
+    like, created = Like.objects.get_or_create(user=request.user, review=review)
+
+    if not created:
+        # すでにいいねしている場合
+        like.delete() # いいねを取り消す(よくあるやつ)
+    return redirect('detail-book', kwargs={'pk': self.object.id})  # 成功時に本の詳細ページにリダイレクト
