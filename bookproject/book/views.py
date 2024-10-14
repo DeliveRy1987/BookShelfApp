@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from .models import Book, Review, Question, FavoriteBook, Like
+from .models import Book, Review, Question, FavoriteBook
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, Q
@@ -49,15 +49,15 @@ class ListBookView(LoginRequiredMixin, ListView):                   #database使
 class DetailBookView(LoginRequiredMixin, DetailView):             #database使う時はDetailViewを使うがどのデータを使うか指定しないといけない     
     template_name = 'book/book_detail.html'
     model = Book
-    model = Like
     
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        like = self.get_object()
-        user = self.request.user
-        context['is_liked'] = like.filter(user=user).exists() if user.is_authenticated else False
-        return context
+    
+    # def get_context_data(self, **kwargs):                                    #いいね機能
+    #     context = super().get_context_data(**kwargs)
+    #     like = self.get_object()
+    #     user = self.request.user
+    #     context['is_liked'] = like.filter(user=user).exists() if user.is_authenticated else False
+    #     return context
     
     
     
@@ -116,9 +116,6 @@ def index_view(request):                #functionバージョン
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # query = request.GET('number')
-    # print(query)
-    
     return render(request, 'book/index.html', {'object_list': object_list, 'ranking_list': ranking_list, 'page_obj':page_obj})  #index.htmlを表示する
 
     
@@ -176,11 +173,18 @@ def mypage(request):
     return render(request, 'book/mypage.html', {'favorite_books': favorite_books})
 
 
-def like_review(request, review_id, self):
-    review = get_object_or_404(Review, pk=review_id)
-    like, created = Like.objects.get_or_create(user=request.user, review=review)
+# def like_review(request, review_id, self):
+#     review = get_object_or_404(Review, pk=review_id)
+#     like, created = Like.objects.get_or_create(user=request.user, review=review)
 
-    if not created:
-        # すでにいいねしている場合
-        like.delete() # いいねを取り消す(よくあるやつ)
-    return redirect('detail-book', kwargs={'pk': self.object.id})  # 成功時に本の詳細ページにリダイレクト
+#     if not created:
+#         # すでにいいねしている場合
+#         like.delete() # いいねを取り消す(よくあるやつ)
+#     return redirect('detail-book', kwargs={'pk': self.object.id})  # 成功時に本の詳細ページにリダイレクト
+
+
+def add_likes(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    review.likes += 1
+    review.save()
+    return render(request, 'detail-book', pk=review.book.id)  # 成功時に本の詳細ページにリダイレクト
