@@ -110,13 +110,14 @@ class UpdateBookView(LoginRequiredMixin, UpdateView):           #UpdateViewは�
 def index_view(request):                #functionバージョン
     object_list = Book.objects.order_by('-id')  #Bookモデルのデータを最新で並べ替える
     ranking_list = Book.objects.annotate(avg_rating=Avg('review__rate')).order_by('-avg_rating')[:3]
+    review_list = Review.objects.order_by('-likes')
     
     paginator = Paginator(ranking_list, ITEMS_PER_PAGE)
     paginator = Paginator(object_list, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    return render(request, 'book/index.html', {'object_list': object_list, 'ranking_list': ranking_list, 'page_obj':page_obj})  #index.htmlを表示する
+    return render(request, 'book/index.html', {'object_list': object_list, 'ranking_list': ranking_list, 'page_obj':page_obj, 'review_list': review_list})  #index.htmlを表示する
 
     
 
