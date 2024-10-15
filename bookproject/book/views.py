@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from .models import Book, Review, Question, FavoriteBook
+from .models import Book, Review, Question, FavoriteBook, HavereadBook
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, Q
@@ -53,7 +53,7 @@ class DetailBookView(LoginRequiredMixin, DetailView):             #database使�
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = self.get_object()
-        context['reviews'] = book.review_set.all().order_by('-likes')  # いいね順にソート
+        context['reviews'] = book.review_set.all().order_by('-likes')  # いいね多い順にソート
         return context
     
     
@@ -164,18 +164,29 @@ def add_to_favorites(request, book_id):
         # すでにお気に入りに存在する場合
         return redirect('index')  # すでに追加されていた場合はindexに戻る
 
+def add_to_havereadbooks(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+    created = HavereadBook.objects.get_or_create(user=request.user, book=book)
+
+    if created:
+        return redirect('mypage')  # 成功時にマイページにリダイレクト
+    else:
+        return redirect('index')  # すでに追加されていた場合はindexに戻る
+
 
 
 def mypage(request):
     # ユーザーのお気に入り投稿を取得
     favorite_books = FavoriteBook.objects.filter(user=request.user).select_related('book')
-    return render(request, 'book/mypage.html', {'favorite_books': favorite_books})
+    haveread_books = HavereadBook.objects.filter(user=request.user).select_related('book')
+    return render(request, 'book/mypage.html', {'favorite_books': favorite_books, 'haveread_books': haveread_books})
 
 
 
 
-def add_likes(review_id):
+def add_likes(request, review_id):
     review = get_object_or_404(Review, pk=review_id)
     review.likes += 1
     review.save()
     return redirect('detail-book', pk=review.book.id)  # 成功時に本の詳細ページにリダイレクト
+
