@@ -53,14 +53,8 @@ class DetailBookView(LoginRequiredMixin, DetailView):             #database使�
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = self.get_object()
-        context['reviews'] = book.review_set.order_by('-likes')  # いいね順にソート
+        context['reviews'] = book.review_set.all().order_by('-likes')  # いいね順にソート
         return context
-    # def get_context_data(self, **kwargs):                                    #いいね機能
-    #     context = super().get_context_data(**kwargs)
-    #     like = self.get_object()
-    #     user = self.request.user
-    #     context['is_liked'] = like.filter(user=user).exists() if user.is_authenticated else False
-    #     return context
     
     
     
