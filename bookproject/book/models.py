@@ -21,22 +21,10 @@ class Book(models.Model):
     def total_likes(self):
         return self.likes.count()
     
-
-# class Like(models.Model):
-#     review = models.ForeignKey('Review', on_delete=models.CASCADE)
-#     user = models.ForeignKey('auth.User', on_delete=models.CASCADE) 
-    
-#     class Meta:
-#         unique_together = ['review', 'user']
-        
-#     def __str__(self):
-#         return f"{self.user} - {self.review.title}"
-
-    
     
     
 class Review(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)     #on deleteはそのモデルが削除されたときの挙動を＝で指定する。cascadeは親が削除されたら子も削除する
+    book = models.ForeignKey(Book, on_delete=models.CASCADE,)     #on deleteはそのモデルが削除されたときの挙動を＝で指定する。cascadeは親が削除されたら子も削除する
     title = models.CharField(max_length=100)
     text = models.TextField()
     rate = models.IntegerField(choices=RATE_CHOICES)

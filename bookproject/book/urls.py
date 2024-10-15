@@ -13,6 +13,5 @@ urlpatterns = [
     path('book/question/', views.CreateQuestionView.as_view(), name = 'question'),
     path('add-to-favorites/<int:book_id>/', views.add_to_favorites, name='add-to-favorites'),
     path('mypage/', views.mypage, name='mypage'),
-    # path('book/<int:book_id>/review/like', views.like_review, name = 'like-review'),
-    path('book/<int:book_id>/review/<int:review_id>/like', views.add_likes, name = 'add-likes'),
+    path('book/review/<int:review_id>/like', views.add_likes, name = 'add-likes'),
 ]

@@ -50,8 +50,11 @@ class DetailBookView(LoginRequiredMixin, DetailView):             #database使�
     template_name = 'book/book_detail.html'
     model = Book
     
-    
-    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+        context['reviews'] = book.review_set.order_by('-likes')  # いいね順にソート
+        return context
     # def get_context_data(self, **kwargs):                                    #いいね機能
     #     context = super().get_context_data(**kwargs)
     #     like = self.get_object()
@@ -87,6 +90,7 @@ class DeleteBookView(LoginRequiredMixin, DeleteView):           #DeleteViewは�
             raise PermissionDenied
         
         return obj
+    
     
     
 class UpdateBookView(LoginRequiredMixin, UpdateView):           #UpdateViewはデータベースのデータを更新する時
@@ -174,18 +178,10 @@ def mypage(request):
     return render(request, 'book/mypage.html', {'favorite_books': favorite_books})
 
 
-# def like_review(request, review_id, self):
-#     review = get_object_or_404(Review, pk=review_id)
-#     like, created = Like.objects.get_or_create(user=request.user, review=review)
-
-#     if not created:
-#         # すでにいいねしている場合
-#         like.delete() # いいねを取り消す(よくあるやつ)
-#     return redirect('detail-book', kwargs={'pk': self.object.id})  # 成功時に本の詳細ページにリダイレクト
 
 
-def add_likes(request, review_id):
+def add_likes(review_id):
     review = get_object_or_404(Review, pk=review_id)
     review.likes += 1
     review.save()
-    return render(request, 'detail-book', pk=review.book.id)  # 成功時に本の詳細ページにリダイレクト
+    return redirect('detail-book', pk=review.book.id)  # 成功時に本の詳細ページにリダイレクト

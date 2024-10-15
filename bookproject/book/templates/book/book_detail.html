@@ -34,14 +34,14 @@
   </div>
 
     <div class="border p-4 mb-2">
-      {% for review in object.review_set.all%}
+      {% for review in reviews %}
       <div>
         <h3 class="h4">{{ review.title }}</h3>
         <div class="px-2">
           <span>(投稿ユーザー: {{ review.user.username }})</span>
           <h6>評価: {{ review.rate}}</h6>
           <p>{{ review.text}}</p>
-          <button type="button" class="btn btn-outline-danger" action="{% url 'add-likes' book.id review.id %}">♡ {{ review.likes }}</button>
+          <a class="btn btn-outline-danger" href="{% url 'add-likes' review.id %}">♡ {{ review.likes }}</a>
         </div>
        
       </div>
